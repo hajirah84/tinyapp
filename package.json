@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/hajirah84/tinyapp#readme",
   "dependencies": {
+    "ejs": "^3.1.10",
     "express": "^4.21.2"
   }
 }
