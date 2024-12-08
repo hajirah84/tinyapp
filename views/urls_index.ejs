@@ -2,12 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-
-    <!-- Bootstrap CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
@@ -22,21 +17,21 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Short URL ID</th>
+            <th scope="col">Short URL</th>
             <th scope="col">Long URL</th>
           </tr>
         </thead>
         <tbody>
           <% for (let id in urls) { %>
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
+              <td><a href="/u/<%= id %>" target="_blank"><%= id %></a></td>
+              <td><a href="<%= urls[id] %>" target="_blank"><%= urls[id] %></a></td>
             </tr>
           <% } %>
         </tbody>
       </table>
+      <a href="#" class="btn btn-primary">Shorten a New URL</a>
     </main>
-    <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -54,4 +49,3 @@
     ></script>
   </body>
 </html>
-
