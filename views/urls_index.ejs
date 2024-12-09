@@ -22,12 +22,16 @@
           </tr>
         </thead>
         <tbody>
-          <% for (let id in urls) { %>
-            <tr>
-              <td><a href="/u/<%= id %>" target="_blank"><%= id %></a></td>
-              <td><a href="<%= urls[id] %>" target="_blank"><%= urls[id] %></a></td>
-            </tr>
-          <% } %>
+
+          <% if (typeof urls !== 'undefined' || urls !== null) { %>
+            <% for (let id in urls) { %>
+                <tr>
+                  <td><%= id %></td>
+                  <td> <a href="#"> <%= urls[id] %> </a> </td>
+                </tr>
+              <% } %>
+                <% } %>
+
         </tbody>
       </table>
       <a href="#" class="btn btn-primary">Shorten a New URL</a>
