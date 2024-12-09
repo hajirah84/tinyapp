@@ -55,7 +55,7 @@ app.listen(PORT, () => {
     console.log(req.body); // Log the POST request body to the console
    const key = generateRandomString ();
    urlDatabase [key] = req.body.longURL
-   res.redirect('/urls/${key}'); // Respond with 'Ok' (we will replace this)
+   res.redirect(`/urls/${key}`); // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/u/:id", (req, res) => {
