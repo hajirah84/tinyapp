@@ -45,11 +45,7 @@ app.listen(PORT, () => {
     res.render("urls_new");
   });
 
-  app.get("/urls/:id", (req, res) => {
-   const urlId = req.params.id; 
-    const templateVars = { id: urlId, longURL: urlDatabase[urlId] };
-    res.render("urls_show", templateVars);
-  });
+  
  
   app.post("/urls", (req, res) => {
     console.log(req.body); // Log the POST request body to the console
@@ -64,6 +60,36 @@ app.get("/u/:id", (req, res) => {
     res.redirect(longURL);
   });
 app.post("/urls/:id/delete",(req,res) => {
-    delete urlDatabase[req.params.id]
+    delete urlDatabase[req.params.id] //Delete the short and long URL
     res.redirect ("/urls")
 } )
+
+app.get("/urls/:id/edit", (req, res) => {
+    const shortURL = req.params.id;
+    const longURL = urlDatabase[shortURL]; 
+  
+    const templateVars = {
+      shortURL,
+      longURL,
+    };
+  
+    res.render('urls_show', templateVars); 
+  });
+  
+
+  app.post('/urls/:id', (req, res) => {
+    const shortURL = req.params.id; 
+    const newLongURL = req.body.longURL; 
+    if (!urlDatabase[shortURL]) {
+      return res.status(404).send("Short URL not found.");
+    }
+  
+    urlDatabase[shortURL] = newLongURL; 
+    res.redirect('/urls'); 
+  });
+  
+  app.get("/urls/:id", (req, res) => {
+    const urlId = req.params.id; 
+     const templateVars = { id: urlId, longURL: urlDatabase[urlId] };
+     res.render("urls_show", templateVars);
+   });
