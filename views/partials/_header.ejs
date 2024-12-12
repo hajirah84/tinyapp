@@ -16,6 +16,9 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+          <span class="nav-item nav-link">
+            Welcome, <%= username || 'Guest' %>!
+          </span>
         </div>
       </div>
       <form action="/login" method="POST" class="form-inline">
