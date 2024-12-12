@@ -20,20 +20,28 @@
             Welcome, <%= username || 'Guest' %>!
           </span>
         </div>
-      </div>
-      <form action="/login" method="POST" class="form-inline">
-        <div class="form-login">
-          <label for="username" class="sr-only">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            name="username" 
-            class="form-control" 
-            placeholder="Username" 
-            required
-          />
+        <div class="ml-auto">
+          <% if (username) { %>
+            <form action="/logout" method="POST" class="form-inline">
+              <button type="submit" class="btn btn-secondary">Log Out</button>
+            </form>
+          <% } else { %>
+            <form action="/login" method="POST" class="form-inline">
+              <div class="form-login">
+                <label for="username" class="sr-only">Username</label>
+                <input 
+                  type="text" 
+                  id="username" 
+                  name="username" 
+                  class="form-control" 
+                  placeholder="Username" 
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-secondary">Login</button>
+            </form>
+          <% } %>
         </div>
-        <button type="submit" class="btn btn-secondary">Login</button>
-      </form>    
+      </div>
     </nav>
   </header>
