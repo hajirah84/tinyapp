@@ -93,3 +93,10 @@ app.get("/urls/:id/edit", (req, res) => {
      const templateVars = { id: urlId, longURL: urlDatabase[urlId] };
      res.render("urls_show", templateVars);
    });
+
+   app.post('/login', (req, res) => {
+    const username = req.body.username; 
+    res.cookie('username', username); 
+    res.redirect('/urls'); 
+  });
+  
