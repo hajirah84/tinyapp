@@ -4,8 +4,8 @@
       <button
         class="navbar-toggler"
         type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavAltMarkup"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNavAltMarkup"
         aria-controls="navbarNavAltMarkup"
         aria-expanded="false"
         aria-label="Toggle navigation"
@@ -16,35 +16,22 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        </div>
+        <div class="ml-auto">
           <% if (user) { %>
             <span class="nav-item nav-link">
               Welcome, <%= user.email %>!
             </span>
-          <% } %>
-        </div>
-        <div class="ml-auto">
-          <% if (user) { %>
-            <form action="/logout" method="POST" class="form-inline">
+            <form action="/logout" method="POST" class="d-inline">
               <button type="submit" class="btn btn-secondary">Log Out</button>
             </form>
           <% } else { %>
-            <form action="/login" method="POST" class="form-inline">
-              <div class="form-login">
-                <label for="username" class="sr-only">Username</label>
-                <input 
-                  type="text" 
-                  id="username" 
-                  name="username" 
-                  class="form-control" 
-                  placeholder="Username" 
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-secondary">Login</button>
-            </form>
+            <a class="btn btn-secondary me-2" href="/login">Login</a>
+            <a class="btn btn-primary" href="/register">Register</a>
           <% } %>
         </div>
       </div>
     </nav>
   </header>
+  
   
