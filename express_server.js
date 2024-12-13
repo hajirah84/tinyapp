@@ -24,6 +24,14 @@ function generateRandomString() {
   }
   return result;
 }
+const emailExists = (email) => {
+    for (let userId in users) {
+      if (users[userId].email === email) {
+        return true;
+      }
+    }
+    return false;
+  };
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -152,6 +160,13 @@ app.post("/register", (req, res) => {
 
   const userId = generateRandomString();
 
+  if (!email || !password) {
+    return res.status(400).send("Your email and password cannot be empty.");
+  }
+
+  if (emailExists(email)) {
+    return res.status(400).send("Email is already registered to another account.");
+  }
   const newUser = {
     id: userId,
     email,
