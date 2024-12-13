@@ -16,12 +16,14 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-          <span class="nav-item nav-link">
-            Welcome, <%= username || 'Guest' %>!
-          </span>
+          <% if (user) { %>
+            <span class="nav-item nav-link">
+              Welcome, <%= user.email %>!
+            </span>
+          <% } %>
         </div>
         <div class="ml-auto">
-          <% if (username) { %>
+          <% if (user) { %>
             <form action="/logout" method="POST" class="form-inline">
               <button type="submit" class="btn btn-secondary">Log Out</button>
             </form>
@@ -45,3 +47,4 @@
       </div>
     </nav>
   </header>
+  
