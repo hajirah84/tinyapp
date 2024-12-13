@@ -184,6 +184,26 @@ app.get("/login", (req, res) => {
     res.render("login"); 
   });
 
+  app.post("/login", (req, res) => {
+    const { email, password } = req.body;
+  
+    let findUser = null;
+    for (const userId in users) {
+      const user = users[userId];
+      if (user.email === email) {
+        findUser = user;
+        break;
+      }
+    }
+  
+    if (!findUser || findUser.password !== password) {
+      return res.status(403).send("Invalid email or password.");
+    }
+  
+    res.cookie("user_id", findUser.id);
+    res.redirect("/urls");
+  });
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
