@@ -144,7 +144,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.get("/register", (req, res) => {
@@ -181,8 +181,11 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-    res.render("login"); 
+    const userId = req.cookies["user_id"]; 
+    const user = users[userId] || null; 
+    res.render("login", { user }); 
   });
+  
 
   app.post("/login", (req, res) => {
     const { email, password } = req.body;
