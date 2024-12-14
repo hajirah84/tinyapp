@@ -72,23 +72,34 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
-  const user = users[userId];
-
-  const templateVars = { user: user || null };
-  res.render("urls_new", templateVars);
+  if (!userId || !(userId in users))  {
+    res.redirect("/login")  
+  }
+  else {
+    const user = users[userId];
+    const templateVars = { user: user || null };
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.post("/urls", (req, res) => {
+const userId = req.cookies["user_id"];
+if (!userId || !(userId in users))  {
+    res.render ("error", {})
+  }
+  else {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   if (!longURL) {
-    return res.status(404).send("URL not found");
+    res.status(404).send("Short URL not found.");
   }
+
   res.redirect(longURL);
 });
 
