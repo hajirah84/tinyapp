@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // Default port 8080
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 
 
@@ -45,10 +45,15 @@ const emailExists = (email) => {
     return userUrls;
   };
 
-app.use(cookieParser());
+  app.use(
+    cookieSession({
+      name: "session",
+      keys: ["yourSecretKey1", "yourSecretKey2"], // Replace these keys with secure random values
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+    })
+  );
 app.use(express.urlencoded({ extended: true }));
 
-// Set the view engine to EJS
 app.set("view engine", "ejs");
 
 // URL Database
@@ -87,7 +92,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   if (!userId) {
     return res.status(401).send("<h1>Error: Log in or Create an Account to see your URLs.</h1><a href='/login'>Login</a> | <a href='/register'>Register</a>");
@@ -248,7 +253,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Error: Invalid email or password.");
   }
 
-  res.cookie("user_id", foundUser.id);
+  req.session("user_id", foundUser.id);
   res.redirect("/urls");
 });
 
@@ -270,13 +275,14 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
   const userId = generateRandomString();
-
+  if (emailExists(email)) {
+    return res.status(400).send("Email is already registered to another account.");
+  }
   if (!email || !password) {
     return res.status(400).send("Your email and password cannot be empty.");
   }
 
-  if (emailExists(email)) {
-    return res.status(400).send("Email is already registered to another account.");
+ 
   }
   const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -287,13 +293,13 @@ app.post("/register", (req, res) => {
   };
 
   users[userId] = newUser;
-  res.cookie("user_id", userId);
+  req.session("user_id", userId);
 
   res.redirect("/urls");
 });
 
 app.get("/login", (req, res) => {
-    const userId = req.cookies["user_id"]; 
+    const userId = req.session.user_id; 
     const user = users[userId] || null; 
     res.render("login", { user }); 
   });
@@ -315,7 +321,7 @@ app.get("/login", (req, res) => {
       return res.status(403).send("Invalid email or password.");
     }
   
-    res.cookie("user_id", findUser.id);
+    req.session("user_id", findUser.id);
     res.redirect("/urls");
   });
 
