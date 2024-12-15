@@ -113,7 +113,7 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
 const userId = req.cookies["user_id"];
 if (!userId || !(userId in users))  {
-    res.render ("error", {})
+    res.redirect ('/login')
   }
   else {
     const shortURL = generateRandomString();
@@ -160,7 +160,15 @@ app.get("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   if (!(shortURL in urlDatabase)) {
     return res.status(404).send("Short URL not found.");
-  } else {
+   }
+   if (!userId || !(userId in users)) {
+    return res.status(401).send("You must be logged in to edit URLs.");
+  }
+
+  if (urlDatabase[shortURL].userID !== userId) {
+    return res.status(403).send("You do not have permission to edit this URL.");
+  }
+   else {
     const longURL = urlDatabase[shortURL].longUrl;
 
   const templateVars = { user: user || null, shortURL, longURL };
@@ -169,9 +177,7 @@ app.get("/urls/:id/edit", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  const shortURL = req.params.id;
-  const newLongURL = req.body.longURL;
-  
+  const shortURL = req.params.id;  
   if (!urlDatabase[shortURL]) {
     return res.status(404).send("Short URL not found.");
   }
@@ -219,7 +225,6 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
-  res.cookie("username", username);
   res.redirect("/urls");
 });
 
