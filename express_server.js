@@ -106,7 +106,7 @@ app.get("/urls", (req, res) => {
 
 
 app.get("/urls/new", (req, res) => {
-  const userId = req.cookies["user_id"];
+    const userId = req.session['user_id'];
   if (!userId || !(userId in users))  {
     res.redirect("/login")  
   }
@@ -118,7 +118,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-const userId = req.cookies["user_id"];
+    const userId = req.session['user_id'];
 if (!userId || !(userId in users))  {
     res.redirect ('/login')
   }
@@ -142,7 +142,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-    const userId = req.cookies["user_id"];
+    const userId = req.session["user_id"];
     const shortURL = req.params.id;
   
     if (!urlDatabase[shortURL]) {
@@ -162,7 +162,7 @@ app.post("/urls/:id/delete", (req, res) => {
   });
 
 app.get("/urls/:id/edit", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   const shortURL = req.params.id;
   if (!(shortURL in urlDatabase)) {
@@ -205,7 +205,7 @@ app.post("/urls/:id", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   const urlId = urlDatabase [req.params.id];
 
@@ -258,13 +258,13 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.clearCookie("user_id");
+req.session['username'] = null;
+  req.session['user_id'] = null;
   res.redirect("/login");
 });
 
 app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+    const userId = req.session['user_id'];
   const user = users[userId];
 
   const templateVars = { user: user || null };
