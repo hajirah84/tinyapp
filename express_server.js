@@ -45,11 +45,13 @@ const emailExists = (email) => {
     return userUrls;
   };
 
+  const { getUserByEmail } = require("./helpers");
+
   app.use(
     cookieSession({
       name: "session",
-      keys: ["yourSecretKey1", "yourSecretKey2"], // Replace these keys with secure random values
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+      keys: ["yourSecretKey1", "yourSecretKey2"], 
+      maxAge: 24 * 60 * 60 * 1000, 
     })
   );
 app.use(express.urlencoded({ extended: true }));
@@ -95,7 +97,7 @@ app.get("/urls", (req, res) => {
   const userId = req.session["user_id"];
   const user = users[userId];
   if (!userId) {
-    return res.status(401).send("<h1>Error: Log in or Create an Account to see your URLs.</h1><a href='/login'>Login</a> | <a href='/register'>Register</a>");
+    return res.status(401).send("Log in or Create an Account to see your URLs.");
   }
 
 
@@ -275,7 +277,7 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
   const userId = generateRandomString();
-  if (emailExists(email)) {
+  if (getUserByEmail(email, users)) { // Use getUserByEmail to check if the email is already in the database
     return res.status(400).send("Email is already registered to another account.");
   }
   if (!email || !password) {
