@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // Default port 8080
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
+
 
 const users = {
     userRandomID: {
@@ -225,6 +227,28 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
+  const { email, password } = req.body;
+
+  let foundUser = null;
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      foundUser = user;
+      break;
+    }
+  }
+
+  if (!foundUser) {
+    return res.status(403).send("Error: Invalid email or password.");
+  }
+
+  const isPasswordCorrect = bcrypt.compareSync(password, foundUser.password);
+
+  if (!isPasswordCorrect) {
+    return res.status(403).send("Error: Invalid email or password.");
+  }
+
+  res.cookie("user_id", foundUser.id);
   res.redirect("/urls");
 });
 
@@ -254,10 +278,12 @@ app.post("/register", (req, res) => {
   if (emailExists(email)) {
     return res.status(400).send("Email is already registered to another account.");
   }
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   const newUser = {
     id: userId,
     email,
-    password,
+    password: hashedPassword,
   };
 
   users[userId] = newUser;
