@@ -1,11 +1,12 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // Default port 8080
-const cookieSession = require("cookie-session");
-const bcrypt = require("bcrypt");
+const cookieSession = require("cookie-session"); //Middleware for managing cookies
+const bcrypt = require("bcrypt"); // Library used to hash passwords
 
-const { getUserByEmail } = require("./helpers");
+const { getUserByEmail } = require("./helpers"); //Helper functions
 
+// Database for users
 const users = {
     userRandomID: {
       id: "userRandomID",
@@ -19,6 +20,7 @@ const users = {
     },
 };
 
+// Function to generate a random string for the shortened URL
 function generateRandomString() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -28,6 +30,7 @@ function generateRandomString() {
   return result;
 }
 
+// Check in case email already exists
 const emailExists = (email) => {
     for (let userId in users) {
       if (users[userId].email === email) {
@@ -36,6 +39,7 @@ const emailExists = (email) => {
     }
     return false;
 };
+
 
 app.use(
     cookieSession({
@@ -74,6 +78,7 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+//JSON representation of URL database
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -82,6 +87,7 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//Route to display URLs for the logged in user
 app.get("/urls", (req, res) => {
   const userId = req.session["user_id"];
   const user = users[userId];
@@ -94,6 +100,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// Route to display shortened URL creation form
 app.get("/urls/new", (req, res) => {
     const userId = req.session['user_id'];
   if (!userId || !(userId in users))  {
@@ -106,6 +113,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+// Route to create a new URL
 app.post("/urls", (req, res) => {
     const userId = req.session['user_id'];
     if (!userId || !(userId in users))  {
@@ -117,6 +125,7 @@ app.post("/urls", (req, res) => {
     }
 });
 
+// Redirect to the long URL from shortened URL
 app.get("/u/:id", (req, res) => {
     if (!(req.params.id in urlDatabase)) {
         return res.status(404).send("Short URL not found.");
@@ -125,6 +134,7 @@ app.get("/u/:id", (req, res) => {
     res.redirect(longURL);
 });
 
+// Delete URL
 app.post("/urls/:id/delete", (req, res) => {
     const userId = req.session["user_id"];
     const shortURL = req.params.id;
@@ -144,7 +154,7 @@ app.post("/urls/:id/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
 });
-
+// Route displays the edit page for any specific URL
 app.get("/urls/:id/edit", (req, res) => {
   const userId = req.session["user_id"];
   const user = users[userId];
@@ -164,7 +174,7 @@ app.get("/urls/:id/edit", (req, res) => {
     res.render("urls_show", templateVars);
   }
 });
-
+// Route to edit/update a URL
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id;  
   const userId = req.session["user_id"];
@@ -186,6 +196,7 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+// Route to view URL
 app.get("/urls/:id", (req, res) => {
   const userId = req.session["user_id"];
   const user = users[userId];
@@ -209,6 +220,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Login route to authenticate user
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -235,24 +247,27 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
+//Login page
 app.get("/login", (req, res) => {
   const userId = req.session.user_id; 
   const user = users[userId] || null; 
   res.render("login", { user }); 
 });
 
+// Logout route to clear the session
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/login");
 });
 
+//Registration page route
 app.get("/register", (req, res) => {
     const userId = req.session['user_id'];
   const user = users[userId];
   const templateVars = { user: user || null };
   res.render("register", templateVars);
 });
-
+// Registration route to create a new user
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10); 
@@ -265,7 +280,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send("Your email and password cannot be empty.");
   }
-
+// Create new user object
   const newUser = {
     id: userId,
     email,
@@ -278,6 +293,7 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 });
 
+//Start server
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
