@@ -74,8 +74,14 @@ function urlsForUser(userId) {
 }
 
 // Routes
+//main page
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const userId = req.session["user_id"];
+  if (userId) {
+    return res.redirect("/urls");
+  } else {
+    return res.redirect("/login");
+  }
 });
 
 //JSON representation of URL database
